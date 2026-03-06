@@ -1,5 +1,4 @@
-
- def not_perfect(self) -> None:
+def not_perfect(self) -> None:
         """Introduce random wall removals to create loops
         and make the maze imperfect."""
         if self.perfect is False:
@@ -32,8 +31,8 @@
                     break
                 x, y = random.choice((unvisited))
                 unvisited.remove((x, y))
-                print("pp")
                 dict_42: dict[str, bool] = {}
+                count: int = 0
                 for d in dirs:
                     m_x, m_y, n_dir, m_dir= self.direction[d]
                     n_x, n_y = x + m_x, y + m_y
@@ -42,8 +41,11 @@
                             dict_42[n_dir] = False
                         else:
                             dict_42[n_dir] = True
+                    
                     else:
                         dict_42[n_dir] = False
+                    if not self.cells[y][x].walls[n_dir]:
+                        count += 1
 
                 random.shuffle(dirs)
                 found: bool = True
@@ -54,10 +56,17 @@
                     n_x, n_y = x + m_x, y + m_y
                     if 0 <= n_x < w and 0 <= n_y < h:
                         if (self.cells[n_y][n_x].walls[m_dir]
-                                and dict_42[next_dir]):
-                                self.cells[y][x].walls[n_dir] = False
-                                self.cells[n_y][n_x].walls[m_dir] = False
-                                wall -= 1
-                                print("uu")
-                                found = False
+                                and dict_42[next_dir]
+                                and count <= 2):
+                                count2: int = 0
+                                for d in dirs:
+                                    if not self.cells[n_y][n_x].walls[d]:
+                                        count2 += 1
+                                if count2 <= 2:
+                                    self.cells[y][x].walls[n_dir] = False
+                                    self.cells[n_y][n_x].walls[m_dir] = False
+                                    wall -= 1
+                                    found = False
                     i += 1
+
+
